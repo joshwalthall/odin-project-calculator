@@ -4,10 +4,12 @@ const button = document.querySelector('button')
 
 buttonContainer.addEventListener('click', pressButton);
 
-let currentOperandOne = 0;
-let currentOperator = '';
-let currentOperandTwo = 0;
-let displayValue = 0;
+const memory = {
+    displayValue: '',
+    operandOne: null,
+    operandTwo: null,
+    operator: null,
+}
 
 function operate (operandOne, operator, operandTwo) {
     let result = 0;
@@ -46,11 +48,23 @@ function divide (operandOne, operandTwo) {
 
 function pressButton (event) {
     if (event.target.classList.contains('number-button')) {
-        let displayText = event.target.textContent;
-        updateDisplay(displayText);
+        let buttonText = event.target.textContent;
+        updateOperand(buttonText);
+        updateDisplay(memory.operandOne);
+    };
+};
+
+function updateOperand (inputText) {
+    if (memory.operandOne === null) {
+        memory.operandOne = inputText;
+    } else if (memory.operandOne.length == 16) {
+        return;
+    } else {
+        memory.operandOne += inputText;
     };
 };
 
 function updateDisplay (displayText) {
-    display.textContent = displayText;
-}
+    memory.displayValue = displayText;
+    display.textContent = memory.displayValue;
+};
