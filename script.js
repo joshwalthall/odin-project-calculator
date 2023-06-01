@@ -63,6 +63,8 @@ function getButtonType(eventTarget) {
 function handleNumberInput(numberInput) {
     if (memory.currentOperand === '0') {
         memory.currentOperand = numberInput;
+    } else if (numberInput === '.' && memory.currentOperand.includes('.')) {
+        return;
     } else if (memory.currentOperand != '0' && !(memory.currentOperand.length >= operandMaxLength)) {
         memory.currentOperand += numberInput;
     };
