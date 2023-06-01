@@ -136,16 +136,16 @@ button:active {
     background-color: var(--color-platinum);
 }
 
-.function-button {
+.operator-button {
     color: var(--color-platinum);
     background-color: var(--color-paynes-gray);
 }
 
-.function-button:hover {
+.operator-button:hover {
     background-color: var(--color-paynes-gright);
 }
 
-.function-button:active {
+.operator-button:active {
     background-color: var(--color-paynes-gray)
 }
 
