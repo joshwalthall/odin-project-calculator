@@ -3,7 +3,7 @@ const memory = {
     operandOne: null,
     operandTwo: null,
     operator: null,
-    currentOperand: null,
+    currentOperand: '0',
 };
 
 const display = document.querySelector('#display');
@@ -61,11 +61,18 @@ function getButtonType(eventTarget) {
 };
 
 function handleNumberInput(numberInput) {
-    if (memory.currentOperand === null) {
+    if (memory.currentOperand === '0') {
         memory.currentOperand = numberInput;
-    } else if (memory.currentOperand != null && !(memory.currentOperand.length >= operandMaxLength)) {
+    } else if (memory.currentOperand != '0' && !(memory.currentOperand.length >= operandMaxLength)) {
         memory.currentOperand += numberInput;
     };
+};
+
+function handleClearInput() {
+    memory.operandOne = null;
+    memory.operator = null;
+    memory.operandTwo = null;
+    memory.currentOperand = '0';
 };
 
 function pressButton(event) {
@@ -76,6 +83,11 @@ function pressButton(event) {
             numberInput = event.target.textContent;
             handleNumberInput(numberInput);
             updateDisplay(memory.currentOperand);
+            break;
+        case 'clear':
+            handleClearInput();
+            updateDisplay(memory.currentOperand);
+            break;
     };
 };
 
