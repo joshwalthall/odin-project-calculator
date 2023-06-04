@@ -110,6 +110,9 @@ function handleNumberInput(numberInput) {
 function handleOperatorInput(operatorInput) {
     if (memory.operator === null) {
         memory.operator = operatorInput;
+    } else if (memory.operator !== null) {
+        handleEqualsInput();
+        memory.operator = operatorInput;
     };
 };
 
