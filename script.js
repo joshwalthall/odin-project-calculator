@@ -78,7 +78,8 @@ function getButtonType(eventTarget) {
 
 function getNumberAction(numberInput) {
     let numberAction = '';
-    if ((memory.displayValue.length >= operandMaxLength && memory.operator === null) || 
+    if ((memory.displayValue.length >= operandMaxLength && memory.operator === null) ||
+        (memory.displayValue.length >= operandMaxLength && memory.operator !== null && memory.operandTwo !== null) ||
         (numberInput === '.' && memory.displayValue.includes('.')) ||
         (numberInput === '0' && memory.displayValue === '0')) {
             numberAction = 'no-action';
