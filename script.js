@@ -1,18 +1,17 @@
 const memory = {
-    displayValue: '',
-    operandOne: null,
-    operandTwo: null,
+    displayValue: '0',
+    operandOne: 0,
     operator: null,
-    currentOperand: '0',
+    operandTwo: null,
 };
 
 const display = document.querySelector('#display');
 const buttonContainer = document.getElementById('button-container');
 const operandMaxLength = 16;
-const operators = ['+', '-', '*', '/'];
 
 buttonContainer.addEventListener('click', pressButton);
 
+// Core mathematic operations
 function add(operandOne, operandTwo) {
     return operandOne + operandTwo;
 };
@@ -29,7 +28,21 @@ function divide(operandOne, operandTwo) {
     return operandOne / operandTwo;
 };
 
-function operate(operandOne, operator, operandTwo) {
+function getCurrentOperand() {
+    let currentOperand = '';
+    if (memory.operator === null) {
+        currentOperand = 'operandOne';
+    } else if (memory.operator !== null) {
+        currentOperand = 'operandTwo';
+    };
+    return currentOperand;
+};
+
+// Run operations and update memory
+function operate() {
+    let operandOne = memory.operandOne;
+    let operator = memory.operator;
+    let operandTwo = memory.operandTwo;
     let result = 0;
     switch (operator) {
         case '+':
@@ -45,7 +58,10 @@ function operate(operandOne, operator, operandTwo) {
             result = divide(operandOne, operandTwo);
             break;
     };
-    return result;
+    memory.operandOne = result;
+    memory.operator = null;
+    memory.operandTwo = null;
+    memory.displayValue = String(memory.operandOne);
 };
 
 function getButtonType(eventTarget) {
@@ -60,13 +76,39 @@ function getButtonType(eventTarget) {
     };
 };
 
+function getNumberAction(numberInput) {
+    let numberAction = '';
+    if ((memory.displayValue.length >= operandMaxLength && memory.operator === null) || 
+        (numberInput === '.' && memory.displayValue.includes('.')) ||
+        (numberInput === '0' && memory.displayValue === '0')) {
+            numberAction = 'no-action';
+    } else if ((memory.displayValue === '0' && numberInput !== '.') ||
+                (memory.operator !== null && memory.operandTwo === null)) {
+        numberAction = 'replace';
+    } else {
+        numberAction = 'append';
+    };
+    return numberAction;
+};
+
 function handleNumberInput(numberInput) {
-    if (memory.currentOperand === '0') {
-        memory.currentOperand = numberInput;
-    } else if (numberInput === '.' && memory.currentOperand.includes('.')) {
-        return;
-    } else if (memory.currentOperand != '0' && !(memory.currentOperand.length >= operandMaxLength)) {
-        memory.currentOperand += numberInput;
+    numberAction = getNumberAction(numberInput);
+    console.log(`numberAction = ${numberAction}`);
+    switch (numberAction) {
+        case 'replace':
+            memory.displayValue = numberInput;
+            memory[getCurrentOperand()] = Number(numberInput);
+            break;
+        case 'append':
+            memory.displayValue += numberInput;
+            memory[getCurrentOperand()] = Number(memory.displayValue);
+            break;
+    };
+};
+
+function handleOperatorInput(operatorInput) {
+    if (memory.operator === null) {
+        memory.operator = operatorInput;
     };
 };
 
@@ -74,7 +116,15 @@ function handleClearInput() {
     memory.operandOne = null;
     memory.operator = null;
     memory.operandTwo = null;
-    memory.currentOperand = '0';
+    memory.displayValue = '0';
+};
+
+function handleEqualsInput() {
+    if (memory.operandOne !== null &&
+        memory.operator !== null &&
+        memory.operandTwo !== null) {
+            operate();
+        };
 };
 
 function pressButton(event) {
@@ -84,16 +134,20 @@ function pressButton(event) {
         case 'number':
             numberInput = event.target.textContent;
             handleNumberInput(numberInput);
-            updateDisplay(memory.currentOperand);
+            break;
+        case 'operator':
+            operatorInput = event.target.textContent;
+            handleOperatorInput(operatorInput);
             break;
         case 'clear':
             handleClearInput();
-            updateDisplay(memory.currentOperand);
             break;
+        case 'equals':
+            handleEqualsInput();
     };
+    updateDisplay()
 };
 
-function updateDisplay(displayText) {
-    memory.displayValue = displayText;
+function updateDisplay() {
     display.textContent = memory.displayValue;
 };
