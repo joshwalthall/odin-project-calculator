@@ -8,6 +8,7 @@ const memory = {
 const display = document.querySelector('#display');
 const buttonContainer = document.getElementById('button-container');
 const operandMaxLength = 16;
+const decimalMaxLength = 5;
 
 buttonContainer.addEventListener('click', pressButton);
 
@@ -25,7 +26,11 @@ function multiply(operandOne, operandTwo) {
 };
 
 function divide(operandOne, operandTwo) {
-    return operandOne / operandTwo;
+    if (operandTwo === 0) {
+        return 'ID10T ERROR';
+    } else {
+        return operandOne / operandTwo;  
+    };
 };
 
 function getCurrentOperand() {
@@ -58,10 +63,30 @@ function operate() {
             result = divide(operandOne, operandTwo);
             break;
     };
+    if (typeof result === 'string') {
+        handleClearInput();
+        memory.displayValue = result;
+    } else if (typeof result === 'number') {
+        result = getFormattedNumber(result);
     memory.operandOne = result;
     memory.operator = null;
     memory.operandTwo = null;
     memory.displayValue = String(memory.operandOne);
+    };    
+};
+
+function getFormattedNumber(numberInput) {
+    let numberAsString = String(numberInput);
+    let splitNumberInput = numberAsString.split('.');
+    let formattedNumber = 0;
+    if (numberAsString.length > operandMaxLength) {
+        let numberLength = splitNumberInput[0].length;
+        let newDecimalLength = (operandMaxLength - numberLength);
+        formattedNumber = numberInput.toFixed(newDecimalLength);
+    } else if (splitNumberInput.length === 1) {
+        formattedNumber = numberInput;
+    };
+    return formattedNumber
 };
 
 function getButtonType(eventTarget) {
@@ -84,7 +109,8 @@ function getNumberAction(numberInput) {
         (numberInput === '0' && memory.displayValue === '0')) {
             numberAction = 'no-action';
     } else if ((memory.displayValue === '0' && numberInput !== '.') ||
-                (memory.operator !== null && memory.operandTwo === null)) {
+                (memory.operator !== null && memory.operandTwo === null) ||
+                memory.operandOne === null) {
         numberAction = 'replace';
     } else {
         numberAction = 'append';
